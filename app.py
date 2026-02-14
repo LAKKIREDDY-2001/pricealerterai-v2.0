@@ -406,8 +406,9 @@ def signup_complete():
     
     signup_id, stored_token, username, email, password, phone, stored_email_otp, stored_email_otp_expiry, stored_phone_otp, stored_phone_otp_expiry, created_at = pending
     
+    # SQLite CURRENT_TIMESTAMP is UTC; compare in UTC to avoid timezone false-expiry.
     expiry = datetime.fromisoformat(created_at) + timedelta(minutes=30)
-    if datetime.now() > expiry:
+    if datetime.utcnow() > expiry:
         cursor.execute("DELETE FROM pending_signups WHERE id = ?", (signup_id,))
         conn.commit()
         conn.close()
@@ -457,6 +458,152 @@ def signup_complete():
         "userId": user_id,
         "message": "Redirecting to login..."
     }), 201
+
+@app.route('/api/send-email-otp', methods=['POST'])
+def api_send_email_otp():
+    data = request.get_json(silent=True) or {}
+    email = (data.get('email') or '').strip().lower()
+    purpose = (data.get('purpose') or 'verification').strip()
+    signup_token = data.get('signupToken')
+
+    if not email:
+        return jsonify({"error": "Email is required"}), 400
+
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    if signup_token:
+        cursor.execute(
+            "SELECT id, email FROM pending_signups WHERE signup_token = ?",
+            (signup_token,)
+        )
+    else:
+        cursor.execute(
+            "SELECT id, email FROM pending_signups WHERE email = ? ORDER BY id DESC LIMIT 1",
+            (email,)
+        )
+    pending = cursor.fetchone()
+    if not pending:
+        conn.close()
+        return jsonify({"error": "No pending signup found. Please sign up again."}), 404
+
+    pending_id, pending_email = pending
+    otp = generate_otp()
+    expiry = (datetime.now() + timedelta(minutes=10)).isoformat()
+    cursor.execute(
+        "UPDATE pending_signups SET email_otp = ?, email_otp_expiry = ? WHERE id = ?",
+        (otp, expiry, pending_id)
+    )
+    conn.commit()
+    conn.close()
+
+    if not send_email_otp(pending_email, otp, purpose):
+        # Keep flow working even if SMTP is not configured; OTP is already stored.
+        print(f"EMAIL OTP ({pending_email}): {otp}")
+        return jsonify({"success": True, "message": "OTP generated (demo mode)"}), 200
+    return jsonify({"success": True, "message": "Email OTP sent"}), 200
+
+@app.route('/api/verify-email-otp', methods=['POST'])
+def api_verify_email_otp():
+    data = request.get_json(silent=True) or {}
+    email = (data.get('email') or '').strip().lower()
+    otp = (data.get('otp') or '').strip()
+    if not email or not otp:
+        return jsonify({"error": "Email and OTP are required"}), 400
+
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        SELECT email_otp, email_otp_expiry
+        FROM pending_signups
+        WHERE email = ?
+        ORDER BY id DESC
+        LIMIT 1
+        """,
+        (email,)
+    )
+    row = cursor.fetchone()
+    conn.close()
+    if not row:
+        return jsonify({"error": "No pending signup found"}), 404
+
+    stored_otp, otp_expiry = row
+    if not stored_otp or stored_otp != otp:
+        return jsonify({"error": "Invalid email OTP"}), 400
+    if otp_expiry and datetime.now() > datetime.fromisoformat(otp_expiry):
+        return jsonify({"error": "Email OTP has expired"}), 400
+    return jsonify({"success": True, "verified": True, "message": "Email verified"}), 200
+
+@app.route('/api/send-phone-otp', methods=['POST'])
+def api_send_phone_otp():
+    data = request.get_json(silent=True) or {}
+    phone = (data.get('phone') or '').strip()
+    signup_token = data.get('signupToken')
+    if not phone:
+        return jsonify({"error": "Phone number is required"}), 400
+
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    if signup_token:
+        cursor.execute(
+            "SELECT id, phone FROM pending_signups WHERE signup_token = ?",
+            (signup_token,)
+        )
+    else:
+        cursor.execute(
+            "SELECT id, phone FROM pending_signups WHERE phone = ? ORDER BY id DESC LIMIT 1",
+            (phone,)
+        )
+    pending = cursor.fetchone()
+    if not pending:
+        conn.close()
+        return jsonify({"error": "No pending signup found. Please sign up again."}), 404
+
+    pending_id, pending_phone = pending
+    otp = generate_otp()
+    expiry = (datetime.now() + timedelta(minutes=10)).isoformat()
+    cursor.execute(
+        "UPDATE pending_signups SET phone_otp = ?, phone_otp_expiry = ? WHERE id = ?",
+        (otp, expiry, pending_id)
+    )
+    conn.commit()
+    conn.close()
+
+    # Demo mode: print OTP in server logs until SMS provider is configured.
+    print(f"PHONE OTP ({pending_phone}): {otp}")
+    return jsonify({"success": True, "message": "Phone OTP sent"}), 200
+
+@app.route('/api/verify-phone-otp', methods=['POST'])
+def api_verify_phone_otp():
+    data = request.get_json(silent=True) or {}
+    phone = (data.get('phone') or '').strip()
+    otp = (data.get('otp') or '').strip()
+    if not phone or not otp:
+        return jsonify({"error": "Phone and OTP are required"}), 400
+
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        SELECT phone_otp, phone_otp_expiry
+        FROM pending_signups
+        WHERE phone = ?
+        ORDER BY id DESC
+        LIMIT 1
+        """,
+        (phone,)
+    )
+    row = cursor.fetchone()
+    conn.close()
+    if not row:
+        return jsonify({"error": "No pending signup found"}), 404
+
+    stored_otp, otp_expiry = row
+    if not stored_otp or stored_otp != otp:
+        return jsonify({"error": "Invalid phone OTP"}), 400
+    if otp_expiry and datetime.now() > datetime.fromisoformat(otp_expiry):
+        return jsonify({"error": "Phone OTP has expired"}), 400
+    return jsonify({"success": True, "verified": True, "message": "Phone verified"}), 200
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
