@@ -1604,7 +1604,9 @@ function mountAIAssistantWidget() {
     const fab = document.createElement('button');
     fab.id = 'ai-assistant-fab';
     fab.className = 'ai-assistant-fab';
-    fab.innerHTML = '<i class="fa fa-comments"></i> AI Chat';
+    fab.innerHTML = '<i class="fa fa-comments"></i><span class="ai-assistant-label">Chat Us</span>';
+    fab.setAttribute('aria-label', 'Chat Us');
+    fab.setAttribute('title', 'Chat Us');
     fab.onclick = openAIAssistant;
     document.body.appendChild(fab);
 }
