@@ -628,6 +628,31 @@ def dashboard():
         return redirect(url_for('login'))
     return render_template('dashboard.html')
 
+@app.route('/dashboard.html')
+def dashboard_page():
+    """Dashboard page (static)"""
+    return render_template('dashboard.html')
+
+@app.route('/trackers.html')
+def trackers_page():
+    """Trackers page"""
+    return send_from_directory('.', 'trackers.html')
+
+@app.route('/live-price.html')
+def live_price():
+    """Live Price page"""
+    return send_from_directory('.', 'live-price.html')
+
+@app.route('/price-trends.html')
+def price_trends():
+    """Price Trends page"""
+    return send_from_directory('.', 'price-trends.html')
+
+@app.route('/settings.html')
+def settings_page():
+    """Settings page"""
+    return send_from_directory('.', 'settings.html')
+
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
