@@ -1601,7 +1601,7 @@ function openAIAssistant() {
             <div class="modal-body">
                 <div class="ai-chat-thread" id="ai-chat-thread">
                     <div class="ai-chat-msg assistant">
-                        <div class="bubble">Hi, I am AI Support. Ask anything about trackers, alerts, graphs, or account issues.</div>
+                        <div class="bubble">Hi, I am AI Support. Are you facing any errors? Please tell me your issue.</div>
                     </div>
                 </div>
                 <div class="ai-chat-input-wrap">
@@ -1669,10 +1669,21 @@ function sendAssistantQuery() {
     const answer = buildAssistantReply(query);
     appendChatMessage('user', query);
     if (queryEl) queryEl.value = '';
-    setTimeout(() => appendChatMessage('assistant', answer), 350);
-    setTimeout(async () => {
+    setTimeout(() => {
+        appendChatMessage('assistant', answer + ' I will open the feedback form now. Please submit it to send this issue to support.');
+    }, 350);
+    setTimeout(() => {
         const payload = '[AI Query] ' + query + '\n\n[AI Reply] ' + answer;
-        const result = await sendFeedbackToMail('other', payload, 'ai_chat');
-        appendChatMessage('assistant', result.message || 'Your query was sent to support mail.');
-    }, 450);
+        closeModal('ai-assistant-modal');
+        showFeedbackModal();
+        setTimeout(() => {
+            const typeEl = document.getElementById('feedback-type');
+            const messageEl = document.getElementById('feedback-message');
+            if (typeEl) typeEl.value = 'bug';
+            if (messageEl) {
+                messageEl.value = payload;
+                messageEl.focus();
+            }
+        }, 120);
+    }, 1200);
 }
