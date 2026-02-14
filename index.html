@@ -339,12 +339,28 @@
     </div>
 
     <style>
+        html, body {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        body {
+            display: block !important;
+            align-items: stretch !important;
+            justify-content: flex-start !important;
+            padding: 0 !important;
+            min-height: 100vh;
+        }
+
         /* Landing Page Styles - Edge to Edge */
         .landing-container {
             width: 100%;
             max-width: 100%;
             margin: 0;
             padding: 0;
+            min-height: 100vh;
         }
         
         .landing-header {
