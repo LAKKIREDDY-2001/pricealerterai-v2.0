@@ -54,8 +54,8 @@
                 <a href="./index.html">About</a>
                 <a href="./index.html">Blog</a>
                 <a href="./index.html">Contact</a>
-                <a href="http://localhost:8081/login" class="btn-nav">Sign In</a>
-                <a href="http://localhost:8081/signup" class="btn-primary">Get Started</a>
+                <a href="./login.html" class="btn-nav auth-link">Sign In</a>
+                <a href="./signup.html" class="btn-primary auth-link">Get Started</a>
             </nav>
         </header>
 
@@ -65,7 +65,7 @@
             <p class="hero-subtitle">Smart AI-powered price tracking for Amazon, Flipkart, Myntra, Ajio, Meesho, and 100+ stores. Save money on every purchase with instant price drop alerts.</p>
             
             <div class="cta-buttons">
-                <a href="http://localhost:8081/signup" class="btn-hero primary">
+                <a href="./signup.html" class="btn-hero primary auth-link">
                     <i class="fa fa-rocket"></i>
                     Start Free Tracking
                 </a>
@@ -262,7 +262,7 @@
         <section class="cta-section">
             <h2>Ready to Start Saving?</h2>
             <p>Join 50,000+ smart shoppers who never miss a price drop.</p>
-            <a href="http://localhost:8081/signup" class="btn-hero primary large">
+            <a href="./signup.html" class="btn-hero primary large auth-link">
                 <i class="fa fa-rocket"></i>
                 Create Free Account
             </a>
@@ -454,6 +454,15 @@
         .btn-hero.large {
             padding: 20px 48px;
             font-size: 1.3rem;
+        }
+
+        .auth-link,
+        .btn-primary,
+        .btn-nav,
+        .btn-hero {
+            position: relative;
+            z-index: 2001;
+            pointer-events: auto;
         }
         
         .trusted-by {
@@ -923,6 +932,14 @@
             var nav = document.getElementById('mainNav');
             nav.classList.toggle('active');
         }
+
+        document.querySelectorAll('.auth-link').forEach((link) => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = link.getAttribute('href');
+                if (target) window.location.assign(target);
+            });
+        });
     </script>
 </body>
 </html>
