@@ -4,6 +4,7 @@ let currentFilter = 'all';
 let currentTracker = null;
 let celebrationTracker = null;
 let appInitialized = false;
+let currentUser = null;
 let currentTrendPeriod = '7d';
 const MAX_HISTORY_POINTS = 240;
 const livePeriodByTracker = {};
@@ -364,6 +365,7 @@ async function loadUserData() {
         const response = await fetch(API_BASE_URL + '/api/user');
         if (response.ok) {
             const user = await response.json();
+            currentUser = user;
             if (user.username) {
                 document.getElementById('user-greeting').textContent = 'Welcome, ' + user.username;
             }
@@ -1225,6 +1227,7 @@ async function initializeApp() {
     loadUserData();
     initTilt();
     initCelebration();
+    mountAIAssistantWidget();
     startAutoRefresh();
     addManualRefreshButton();
 }
@@ -1517,7 +1520,7 @@ function showFeedbackModal() {
                     <label>Your Feedback</label>
                     <textarea id="feedback-message" class="product-input" rows="5" placeholder="Tell us what you think..."></textarea>
                 </div>
-                <button class="action-btn" onclick="submitFeedback()">
+                <button class="action-btn" id="feedback-submit-btn" onclick="submitFeedback()">
                     <i class="fa fa-paper-plane"></i> Submit Feedback
                 </button>
             </div>
@@ -1527,18 +1530,99 @@ function showFeedbackModal() {
     setTimeout(() => modal.classList.add('active'), 10);
 }
 
-function submitFeedback() {
+async function submitFeedback(prefilledMessage) {
     const type = document.getElementById('feedback-type').value;
-    const message = document.getElementById('feedback-message').value;
+    const message = (prefilledMessage || document.getElementById('feedback-message').value || '').trim();
+    const submitBtn = document.getElementById('feedback-submit-btn');
     
-    if (!message.trim()) {
+    if (!message) {
         showToast('error', 'Please enter your feedback');
         return;
     }
-    
-    // In a real app, this would send to a backend
-    console.log('Feedback submitted:', { type, message });
-    
-    showToast('success', 'Thank you for your feedback!');
-    closeModal('feedback-modal');
+
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Sending...';
+    }
+
+    try {
+        const response = await fetch(API_BASE_URL + '/api/feedback', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                type,
+                message,
+                source: 'dashboard_feedback',
+                name: currentUser?.username || '',
+                email: currentUser?.email || ''
+            })
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.error || 'Unable to send feedback');
+        }
+        showToast('success', data.message || 'Feedback sent to mail');
+        closeModal('feedback-modal');
+    } catch (error) {
+        showToast('error', error.message || 'Failed to send feedback');
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fa fa-paper-plane"></i> Submit Feedback';
+        }
+    }
+}
+
+function openAIAssistant() {
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay';
+    modal.id = 'ai-assistant-modal';
+    modal.innerHTML = `
+        <div class="modal ai-assistant-modal">
+            <div class="modal-header">
+                <h3><i class="fa fa-robot"></i> AI Support Assistant</h3>
+                <button class="modal-close" onclick="closeModal('ai-assistant-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Enter your query. We will send it to feedback mail directly.</p>
+                <div class="form-group">
+                    <label>Your Query</label>
+                    <textarea id="assistant-query" class="product-input" rows="5" placeholder="Type your query..."></textarea>
+                </div>
+                <button class="action-btn" onclick="sendAssistantQuery()">
+                    <i class="fa fa-paper-plane"></i> Send Query
+                </button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    setTimeout(() => modal.classList.add('active'), 10);
+}
+
+function mountAIAssistantWidget() {
+    if (document.getElementById('ai-assistant-fab')) return;
+    const fab = document.createElement('button');
+    fab.id = 'ai-assistant-fab';
+    fab.className = 'ai-assistant-fab';
+    fab.innerHTML = '<i class="fa fa-comments"></i> AI Chat';
+    fab.onclick = openAIAssistant;
+    document.body.appendChild(fab);
+}
+
+function sendAssistantQuery() {
+    const queryEl = document.getElementById('assistant-query');
+    const query = queryEl ? queryEl.value.trim() : '';
+    if (!query) {
+        showToast('error', 'Please enter your query');
+        return;
+    }
+    closeModal('ai-assistant-modal');
+    showFeedbackModal();
+    setTimeout(() => {
+        const typeEl = document.getElementById('feedback-type');
+        const messageEl = document.getElementById('feedback-message');
+        const payload = '[AI Query] ' + query;
+        if (typeEl) typeEl.value = 'other';
+        if (messageEl) messageEl.value = payload;
+        submitFeedback(payload);
+    }, 100);
 }

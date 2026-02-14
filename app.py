@@ -719,6 +719,62 @@ def get_user():
         return jsonify({"id": user[0], "username": user[1], "email": user[2], "phone": user[3]})
     return jsonify({"error": "User not found"}), 404
 
+@app.route('/api/feedback', methods=['POST'])
+def api_feedback():
+    data = request.get_json(silent=True) or {}
+    message = (data.get('message') or '').strip()
+    feedback_type = (data.get('type') or 'general').strip()
+    source = (data.get('source') or 'web').strip()
+    name = (data.get('name') or '').strip()
+    email = (data.get('email') or '').strip()
+
+    if not message:
+        return jsonify({"error": "Feedback message is required"}), 400
+
+    # Fill missing sender details from current session user.
+    if 'user_id' in session and (not name or not email):
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+        cursor.execute("SELECT username, email FROM users WHERE id = ?", (session['user_id'],))
+        row = cursor.fetchone()
+        conn.close()
+        if row:
+            name = name or (row[0] or '')
+            email = email or (row[1] or '')
+
+    to_email = EMAIL_CONFIG.get('smtp_email') or 'pricealerterai@gmail.com'
+    subject = f"AI Price Alert Feedback [{feedback_type}]"
+    html_body = f"""
+    <h2>New Feedback Received</h2>
+    <p><strong>Type:</strong> {feedback_type}</p>
+    <p><strong>Source:</strong> {source}</p>
+    <p><strong>Name:</strong> {name or 'Anonymous'}</p>
+    <p><strong>Email:</strong> {email or 'Not provided'}</p>
+    <p><strong>Message:</strong></p>
+    <pre style=\"white-space: pre-wrap; font-family: Arial, sans-serif;\">{message}</pre>
+    """
+    text_body = (
+        f"Type: {feedback_type}\n"
+        f"Source: {source}\n"
+        f"Name: {name or 'Anonymous'}\n"
+        f"Email: {email or 'Not provided'}\n\n"
+        f"Message:\n{message}\n"
+    )
+
+    sent = send_mail(to_email=to_email, subject=subject, html_body=html_body, text_body=text_body)
+    if not sent:
+        # Fallback so customer flow does not break if SMTP credentials are missing.
+        try:
+            with open('feedback_fallback.log', 'a') as f:
+                f.write(f"{datetime.now().isoformat()} | {feedback_type} | {source} | {name} | {email}\n{message}\n---\n")
+        except Exception:
+            pass
+        return jsonify({
+            "success": True,
+            "message": "Feedback captured. Configure SMTP app password to deliver emails directly."
+        }), 200
+    return jsonify({"success": True, "message": "Feedback sent successfully"}), 200
+
 @app.route('/api/trackers', methods=['GET', 'POST', 'DELETE', 'PUT'])
 def trackers():
     if 'user_id' not in session:

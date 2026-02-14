@@ -1675,6 +1675,32 @@ body {
     transform: scale(1) translateY(0);
 }
 
+.ai-assistant-fab {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 1200;
+    border: none;
+    border-radius: 999px;
+    background: var(--gradient-orange);
+    color: #fff;
+    font-weight: 700;
+    padding: 12px 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: 0 10px 26px rgba(255, 122, 0, 0.35);
+}
+
+.ai-assistant-fab:hover {
+    transform: translateY(-2px);
+}
+
+.ai-assistant-modal {
+    max-width: 560px;
+}
+
 .modal h3 {
     font-size: 1.4rem;
     color: var(--text-main);
