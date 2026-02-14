@@ -742,7 +742,8 @@ def api_feedback():
             name = name or (row[0] or '')
             email = email or (row[1] or '')
 
-    to_email = EMAIL_CONFIG.get('smtp_email') or 'pricealerterai@gmail.com'
+    # Always route customer feedback to your support inbox.
+    to_email = 'pricealerterai@gmail.com'
     subject = f"AI Price Alert Feedback [{feedback_type}]"
     html_body = f"""
     <h2>New Feedback Received</h2>

@@ -1694,6 +1694,8 @@ body {
     cursor: pointer;
     box-shadow: 0 10px 26px rgba(255, 122, 0, 0.35);
     transition: transform 0.2s ease;
+    transform-style: preserve-3d;
+    overflow: visible;
 }
 
 .ai-assistant-fab::after {
@@ -1712,11 +1714,25 @@ body {
 }
 
 .ai-assistant-fab:hover {
-    transform: translateY(-2px);
+    transform: translateY(-4px) rotate(-2deg) scale(1.02);
+    box-shadow: 0 18px 34px rgba(255, 122, 0, 0.42);
 }
 
 .ai-assistant-fab i {
     font-size: 1.35rem;
+    transform: translateZ(2px);
+}
+
+.ai-assistant-fab::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    width: 42px;
+    height: 16px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.55), rgba(255,255,255,0.05));
+    pointer-events: none;
 }
 
 .ai-assistant-label {
@@ -1742,6 +1758,9 @@ body {
 
 .ai-assistant-modal {
     max-width: 560px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: linear-gradient(160deg, rgba(255,255,255,0.95), rgba(245,247,252,0.92));
+    box-shadow: 0 26px 60px rgba(0, 0, 0, 0.2);
 }
 
 .assistant-reply {

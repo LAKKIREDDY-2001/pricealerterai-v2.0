@@ -1564,7 +1564,11 @@ async function submitFeedback(prefilledMessage) {
         showToast('success', data.message || 'Feedback sent to mail');
         closeModal('feedback-modal');
     } catch (error) {
-        showToast('error', error.message || 'Failed to send feedback');
+        // Direct fallback: open user's mail client with prefilled content.
+        const subject = encodeURIComponent('AI Price Alert Feedback [' + type + ']');
+        const body = encodeURIComponent(message + '\n\nSource: dashboard_feedback');
+        window.location.href = 'mailto:pricealerterai@gmail.com?subject=' + subject + '&body=' + body;
+        showToast('success', 'Opening mail app to send feedback directly');
         if (submitBtn) {
             submitBtn.disabled = false;
             submitBtn.innerHTML = '<i class="fa fa-paper-plane"></i> Submit Feedback';
