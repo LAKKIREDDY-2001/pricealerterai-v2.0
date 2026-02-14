@@ -5,33 +5,24 @@ let emailVerified = false;
 let phoneVerified = false;
 
 // Backend API configuration
-// For local development: use empty string or 'http://localhost:8081'
-// For production/preview: set to your deployed backend URL
-// Auto-detect from current page to avoid CORS issues
+// Optional override:
+// - window.API_BASE_URL = "https://api.pricealerter.in"
+// - <meta name="api-base-url" content="https://api.pricealerter.in">
 const getApiBaseUrl = () => {
-    const currentUrl = window.location.origin;
-    // Use current page origin if on localhost/127.0.0.1
-    if (currentUrl.includes('localhost') || currentUrl.includes('127.0.0.1')) {
-        return currentUrl;
+    const metaValue = document.querySelector('meta[name="api-base-url"]')?.content || '';
+    const explicitBase = window.API_BASE_URL || metaValue;
+    if (explicitBase) {
+        return explicitBase.replace(/\/+$/, '');
     }
-    // For network IP access, use localhost:8081 as fallback
-    return 'http://localhost:8081';
+    const host = window.location.hostname.toLowerCase();
+    if (host === 'pricealerter.in' || host === 'www.pricealerter.in' || host.endsWith('.github.io')) {
+        return 'https://pricealerter.in';
+    }
+    return window.location.origin;
 };
 const API_BASE_URL = getApiBaseUrl();
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (window.location.hostname.includes('github.io')) {
-        // GitHub Pages cannot call local Flask APIs from HTTPS reliably.
-        if (window.location.pathname.includes('signup')) {
-            window.location.replace('http://localhost:8081/signup');
-            return;
-        }
-        if (window.location.pathname.includes('login')) {
-            window.location.replace('http://localhost:8081/login');
-            return;
-        }
-    }
-
     const signupForm = document.getElementById('signup-form');
     const loginForm = document.getElementById('login-form');
     const forgotPasswordForm = document.getElementById('forgot-password-form');
@@ -163,7 +154,7 @@ async function handleSignup(e) {
         }
     } catch (error) {
         console.error('Signup error:', error);
-        showError('Cannot connect to signup service. Ensure Flask is running on http://localhost:8081 and try again.');
+        showError('Cannot connect to signup service. Please check server/API configuration and try again.');
         if (submitBtn) {
             submitBtn.disabled = false;
             submitBtn.innerHTML = '<span>Create Account</span><i class="fa fa-user-plus"></i>';

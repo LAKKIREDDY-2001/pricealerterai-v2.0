@@ -6,7 +6,7 @@ import string
 import json
 import secrets
 from concurrent.futures import ThreadPoolExecutor
-from flask import Flask, request, jsonify, session, redirect, url_for, render_template, send_from_directory
+from flask import Flask, request, jsonify, session, redirect, url_for, render_template, send_from_directory, has_request_context
 from flask_cors import CORS
 import requests
 from bs4 import BeautifulSoup
@@ -20,8 +20,9 @@ app = Flask(__name__)
 executor = ThreadPoolExecutor(max_workers=3)
 # Use stable secret key in production (set SECRET_KEY env var), fallback for local.
 app.secret_key = os.environ.get('SECRET_KEY', os.urandom(24))
+is_production = os.environ.get('APP_ENV', '').lower() == 'production'
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-app.config['SESSION_COOKIE_SECURE'] = False
+app.config['SESSION_COOKIE_SECURE'] = is_production
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 CORS(app, supports_credentials=True, origins="*")
 
@@ -62,6 +63,8 @@ def load_email_config():
         config['smtp_password'] = os.environ.get('SMTP_PASSWORD')
     if os.environ.get('SMTP_FROM_NAME'):
         config['from_name'] = os.environ.get('SMTP_FROM_NAME')
+    if os.environ.get('HOST_URL'):
+        config['host_url'] = os.environ.get('HOST_URL')
     return config
 
 EMAIL_CONFIG = load_email_config()
@@ -164,7 +167,11 @@ def send_email_otp(email, otp, purpose="verification"):
         return True
 
 def send_password_reset_email(email, reset_token):
-    host_url = EMAIL_CONFIG.get('host_url', 'http://localhost:8081')
+    host_url = str(EMAIL_CONFIG.get('host_url', '')).strip()
+    if not host_url and has_request_context():
+        host_url = request.url_root.rstrip('/')
+    if not host_url:
+        host_url = 'https://pricealerter.in'
     reset_link = f"{host_url}/reset-password?token={reset_token}"
     email_content = f'''
     <!DOCTYPE html>
@@ -1189,6 +1196,8 @@ def serve_static(filename):
 
 if __name__ == "__main__":
     init_db()
-    app.run(host='0.0.0.0', port=8081, debug=True)
+    port = int(os.environ.get('PORT', 8081))
+    debug_mode = os.environ.get('FLASK_DEBUG', 'false').lower() == 'true'
+    app.run(host='0.0.0.0', port=port, debug=debug_mode)
 else:
     init_db()

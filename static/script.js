@@ -11,11 +11,16 @@ const livePeriodByTracker = {};
 
 // Backend API configuration
 const getApiBaseUrl = () => {
-    const currentUrl = window.location.origin;
-    if (currentUrl.includes('localhost') || currentUrl.includes('127.0.0.1')) {
-        return currentUrl;
+    const metaValue = document.querySelector('meta[name="api-base-url"]')?.content || '';
+    const explicitBase = window.API_BASE_URL || metaValue;
+    if (explicitBase) {
+        return explicitBase.replace(/\/+$/, '');
     }
-    return 'http://localhost:8081';
+    const host = window.location.hostname.toLowerCase();
+    if (host === 'pricealerter.in' || host === 'www.pricealerter.in' || host.endsWith('.github.io')) {
+        return 'https://pricealerter.in';
+    }
+    return window.location.origin;
 };
 const API_BASE_URL = getApiBaseUrl();
 
@@ -1645,7 +1650,7 @@ function buildAssistantReply(query) {
         return 'Try Refresh All or wait 5 seconds for auto-refresh. Also verify product link is correct.';
     }
     if (q.includes('signup') || q.includes('sign up') || q.includes('login') || q.includes('sign in')) {
-        return 'Use local app links: /signup and /login on localhost:8081. GitHub Pages is static only.';
+        return 'Use Sign Up and Sign In from this site menu. If not opening, refresh once and try again.';
     }
     if (q.includes('target') || q.includes('alert')) {
         return 'Set a lower target price than current price. You will be notified when current price reaches target.';
