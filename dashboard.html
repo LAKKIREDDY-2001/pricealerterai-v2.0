@@ -1,851 +1,174 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dashboard - AI Price Alert | Track Your Prices</title>
-    <meta name="description" content="Manage your price trackers on AI Price Alert. Monitor prices across Amazon, Flipkart, Myntra and more.">
-    <meta name="keywords" content="price tracker, dashboard, price alerts, amazon price tracker">
-    <meta property="og:title" content="Dashboard - AI Price Alert">
-    <meta property="og:description" content="Manage your price trackers">
-    <meta property="og:image" content="https://aipricealert.com/static/brand/og-image.png">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔔</text></svg>">
-    <link rel="stylesheet" href="./static/style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Unbounded:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --accent-orange: #ff9f0a;
-            --accent-cyan: #16a7c6;
-            --success: #27c93f;
-            --danger: #ff5f56;
-            --text-main: #1d1d1f;
-            --text-secondary: #86868b;
-            --bg-light: #f5f5f7;
-            --bg-white: #ffffff;
-            --border-color: #e5e5e5;
-        }
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: 'Space Grotesk', sans-serif;
-            background: linear-gradient(160deg, #f7f3ea 0%, #eff4f7 100%);
-            min-height: 100vh;
-        }
-        
-        .scene {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 0;
-        }
-        
-        .scene .orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(12px);
-            opacity: 0.85;
-        }
-        
-        .scene .orb-1 {
-            width: 280px;
-            height: 280px;
-            background: radial-gradient(circle at 30% 30%, rgba(255, 180, 115, 0.95), rgba(255, 122, 89, 0.25));
-            top: -60px;
-            left: -80px;
-        }
-        
-        .scene .orb-2 {
-            width: 360px;
-            height: 360px;
-            background: radial-gradient(circle at 40% 40%, rgba(88, 221, 255, 0.6), rgba(22, 167, 198, 0.2));
-            bottom: -120px;
-            right: -120px;
-        }
-        
-        .scene .orb-3 {
-            width: 220px;
-            height: 220px;
-            background: radial-gradient(circle at 40% 40%, rgba(255, 230, 188, 0.7), rgba(255, 168, 99, 0.2));
-            top: 25%;
-            right: 10%;
-        }
-        
-        .app-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        /* Header */
-        .app-header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(18px);
-            border-radius: 20px;
-            padding: 20px 28px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-        
-        .app-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .app-logo i {
-            font-size: 32px;
-            color: var(--accent-orange);
-        }
-        
-        .app-logo span {
-            font-size: 22px;
-            font-weight: 700;
-            font-family: 'Unbounded', sans-serif;
-            color: var(--text-main);
-        }
-        
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-        
-        .welcome-text {
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-        
-        .welcome-text strong {
-            color: var(--text-main);
-            display: block;
-            font-size: 16px;
-        }
-        
-        .header-actions {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        
-        .btn {
-            padding: 10px 18px;
-            border: none;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s;
-        }
-        
-        .btn-light {
-            background: var(--bg-light);
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-        }
-        
-        .btn-light:hover {
-            background: #fff;
-            border-color: var(--accent-orange);
-            color: var(--accent-orange);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent-orange), #ff7b00);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 159, 10, 0.3);
-        }
-        
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-        
-        .auto-refresh-badge {
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .auto-refresh-badge.on {
-            background: rgba(39, 201, 63, 0.15);
-            color: var(--success);
-        }
-        
-        .auto-refresh-badge.off {
-            background: rgba(134, 134, 139, 0.15);
-            color: var(--text-secondary);
-        }
-        
-        .auto-refresh-badge i {
-            animation: spin 2s linear infinite;
-        }
-        
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        
-        /* Add Tracker Card */
-        .add-tracker-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(18px);
-            border-radius: 20px;
-            padding: 24px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-        }
-        
-        .add-tracker-card h2 {
-            font-size: 18px;
-            margin-bottom: 16px;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .add-tracker-card h2 i {
-            color: var(--accent-orange);
-        }
-        
-        .tracker-inputs {
-            display: grid;
-            grid-template-columns: 2fr 1fr auto;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-        
-        @media (max-width: 768px) {
-            .tracker-inputs {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .tracker-inputs input {
-            padding: 14px 18px;
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            font-size: 15px;
-            transition: all 0.3s;
-        }
-        
-        .tracker-inputs input:focus {
-            outline: none;
-            border-color: var(--accent-orange);
-            box-shadow: 0 0 0 4px rgba(255, 159, 10, 0.1);
-        }
-        
-        .quick-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-        
-        @media (max-width: 900px) {
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        
-        @media (max-width: 500px) {
-            .stats-grid { grid-template-columns: 1fr; }
-        }
-        
-        .stat-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(18px);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-            text-align: center;
-        }
-        
-        .stat-card .stat-value {
-            font-size: 32px;
-            font-weight: 800;
-            color: var(--text-main);
-            font-family: 'Unbounded', sans-serif;
-        }
-        
-        .stat-card .stat-label {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-top: 4px;
-        }
-        
-        .stat-card.highlight .stat-value {
-            color: var(--success);
-        }
-        
-        /* Trackers Grid */
-        .trackers-section h2 {
-            font-size: 20px;
-            margin-bottom: 16px;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        
-        .trackers-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 16px;
-        }
-        
-        .tracker-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(18px);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s;
-        }
-        
-        .tracker-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 16px 40px rgba(255, 159, 10, 0.15);
-        }
-        
-        .tracker-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 12px;
-        }
-        
-        .tracker-name {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-main);
-            line-height: 1.3;
-        }
-        
-        .tracker-store {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-top: 4px;
-        }
-        
-        .tracker-delete {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            padding: 6px;
-            border-radius: 8px;
-            transition: all 0.3s;
-        }
-        
-        .tracker-delete:hover {
-            background: rgba(255, 95, 86, 0.1);
-            color: var(--danger);
-        }
-        
-        .tracker-url {
-            font-size: 12px;
-            color: var(--accent-cyan);
-            word-break: break-all;
-            margin-bottom: 16px;
-            display: block;
-            text-decoration: none;
-        }
-        
-        .tracker-url:hover {
-            text-decoration: underline;
-        }
-        
-        .tracker-prices {
-            display: flex;
-            justify-content: space-between;
-            padding: 14px 0;
-            border-top: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
-            margin: 12px 0;
-        }
-        
-        .price-box {
-            text-align: center;
-        }
-        
-        .price-box .price-label {
-            font-size: 11px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .price-box .price-value {
-            font-size: 20px;
-            font-weight: 700;
-            margin-top: 4px;
-        }
-        
-        .price-box.current .price-value {
-            color: var(--success);
-        }
-        
-        .tracker-status {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .status-pill {
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .status-pill.active {
-            background: rgba(255, 159, 10, 0.15);
-            color: var(--accent-orange);
-        }
-        
-        .status-pill.reached {
-            background: rgba(39, 201, 63, 0.15);
-            color: var(--success);
-        }
-        
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-        }
-        
-        .empty-state i {
-            font-size: 60px;
-            color: var(--accent-orange);
-            margin-bottom: 20px;
-        }
-        
-        .empty-state h3 {
-            font-size: 22px;
-            margin-bottom: 10px;
-            color: var(--text-main);
-        }
-        
-        .empty-state p {
-            color: var(--text-secondary);
-            margin-bottom: 20px;
-        }
-        
-        /* Toast */
-        .toast-notification {
-            position: fixed;
-            top: 24px;
-            right: 24px;
-            background: var(--text-main);
-            color: white;
-            padding: 16px 24px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            transform: translateX(120%);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 1000;
-        }
-        
-        .toast-notification.active {
-            transform: translateX(0);
-        }
-        
-        .toast-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .toast-icon.success { background: linear-gradient(135deg, #11998e, #38ef7d); }
-        .toast-icon.error { background: linear-gradient(135deg, #cb2d3e, #ef473a); }
-        
-        /* Mobile */
-        @media (max-width: 768px) {
-            .app-header {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .user-info {
-                flex-direction: column;
-            }
-            
-            .header-actions {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard - AI Price Alert</title>
+  <link rel="stylesheet" href="./static/style.css">
+  <style>
+    .demo-wrap{max-width:1200px;margin:20px auto;padding:16px}
+    .demo-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    .demo-card{background:#fff;border-radius:16px;padding:14px;box-shadow:0 12px 30px rgba(0,0,0,.08)}
+    .demo-inputs{display:grid;grid-template-columns:2fr 1fr auto;gap:10px;margin:12px 0}
+    .demo-inputs input{padding:12px;border:1px solid #ddd;border-radius:10px}
+    .btn{border:none;border-radius:10px;padding:12px 16px;font-weight:700;cursor:pointer}
+    .btn-primary{background:#ff9800;color:#fff}.btn-light{background:#fff;color:#222;border:1px solid #ddd}
+    .stat-grid{display:grid;grid-template-columns:repeat(4,minmax(120px,1fr));gap:10px;margin-top:10px}
+    .tracker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;margin-top:12px}
+    .tracker-title{font-size:16px;font-weight:800;line-height:1.3}
+    .tracker-url{font-size:12px;word-break:break-all}
+    .tracker-row{display:flex;justify-content:space-between;margin-top:8px}
+    .pill{display:inline-block;padding:4px 9px;border-radius:999px;font-size:12px;font-weight:700}
+    .pill.ok{background:#e7f9ee;color:#15803d}.pill.wait{background:#fff3cd;color:#92400e}
+    @media (max-width:768px){.demo-inputs{grid-template-columns:1fr}.stat-grid{grid-template-columns:repeat(2,1fr)}}
+  </style>
 </head>
 <body>
-    <div class="scene">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
+  <div class="scene"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
+  <div class="demo-wrap">
+    <div class="demo-top demo-card">
+      <div>
+        <h2 style="margin:0">AI Price Alert Dashboard</h2>
+        <small id="welcome"></small>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span id="refreshBadge" class="pill ok">Auto refresh: ON (5s)</span>
+        <button class="btn btn-light" id="toggleRefresh">Pause</button>
+        <button class="btn btn-light" id="logoutBtn">Logout</button>
+      </div>
     </div>
-    
-    <div class="app-container">
-        <!-- Header -->
-        <header class="app-header">
-            <div class="app-logo">
-                <i class="fa fa-bell"></i>
-                <span>AI Price Alert</span>
-            </div>
-            <div class="user-info">
-                <div class="welcome-text">
-                    Welcome, <strong id="welcome">User</strong>
-                </div>
-            </div>
-            <div class="header-actions">
-                <span id="refreshBadge" class="auto-refresh-badge on">
-                    <i class="fa fa-sync"></i> Auto: ON
-                </span>
-                <button class="btn btn-light" id="toggleRefresh">
-                    <i class="fa fa-pause"></i> Pause
-                </button>
-                <button class="btn btn-danger" id="logoutBtn">
-                    <i class="fa fa-sign-out-alt"></i> Logout
-                </button>
-            </div>
-        </header>
-        
-        <!-- Add Tracker -->
-        <div class="add-tracker-card">
-            <h2><i class="fa fa-plus-circle"></i> Add New Tracker</h2>
-            <div class="tracker-inputs">
-                <input type="url" id="productUrl" placeholder="Paste product URL from Amazon, Flipkart, Myntra, Ajio, Meesho..." />
-                <input type="number" id="targetPrice" placeholder="Target price (₹)" min="1" step="0.01" />
-                <button class="btn btn-primary" id="addTrackerBtn">
-                    <i class="fa fa-bell"></i> Start Tracking
-                </button>
-            </div>
-            <div class="quick-actions">
-                <button class="btn btn-light" id="refreshAllBtn">
-                    <i class="fa fa-sync"></i> Refresh All
-                </button>
-                <button class="btn btn-light" id="clearAllBtn">
-                    <i class="fa fa-trash"></i> Clear All
-                </button>
-                <a href="./index.html" class="btn btn-light">
-                    <i class="fa fa-home"></i> Home
-                </a>
-            </div>
-        </div>
-        
-        <!-- Stats -->
-        <div class="stats-grid" id="stats"></div>
-        
-        <!-- Trackers -->
-        <section class="trackers-section">
-            <h2>Your Price Trackers</h2>
-            <div class="trackers-grid" id="trackerGrid"></div>
-        </section>
+
+    <div class="demo-card" style="margin-top:12px">
+      <div class="demo-inputs">
+        <input id="productUrl" placeholder="Paste product URL from Amazon / Flipkart / Myntra / Ajio / Meesho..." />
+        <input id="targetPrice" type="number" min="1" step="0.01" placeholder="Target price" />
+        <button class="btn btn-primary" id="addTrackerBtn">Start Tracking</button>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-light" id="refreshAllBtn">Refresh All</button>
+        <a class="btn btn-light" href="./index.html" style="text-decoration:none">Back to Home</a>
+      </div>
     </div>
-    
-    <script>
-        // Check authentication
-        const user = JSON.parse(localStorage.getItem('pa_current_user') || 'null');
-        if (!user) {
-            window.location.href = './login.html';
-        }
 
-        document.getElementById('welcome').textContent = user.username || user.email;
+    <div class="stat-grid" id="stats"></div>
+    <div class="tracker-grid" id="trackerGrid"></div>
+  </div>
 
-        // Storage key for this user's trackers
-        const key = 'pa_trackers_' + user.email;
-        let trackers = JSON.parse(localStorage.getItem(key) || '[]');
-        let refreshTimer = null;
-        let autoOn = true;
+  <script>
+    const user = JSON.parse(localStorage.getItem('pa_current_user') || 'null');
+    if (!user) window.location.href = './login.html';
 
-        // Save trackers
-        const save = () => localStorage.setItem(key, JSON.stringify(trackers));
+    document.getElementById('welcome').textContent = 'Welcome, ' + (user.username || user.email);
 
-        // Parse product name from URL
-        const parseName = (url) => {
-            try {
-                const u = new URL(url);
-                const path = decodeURIComponent(u.pathname.replace(/\/+$/, ''));
-                const slug = path.split('/').filter(Boolean).pop() || u.hostname;
-                return slug.replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase()).slice(0, 110);
-            } catch { return 'Product'; }
-        };
+    const key = 'pa_trackers_' + user.email;
+    let trackers = JSON.parse(localStorage.getItem(key) || '[]');
+    let refreshTimer = null;
+    let autoOn = true;
 
-        // Get store name from URL
-        const getStoreName = (url) => {
-            try {
-                const hostname = new URL(url).hostname.toLowerCase();
-                if (hostname.includes('amazon')) return 'Amazon';
-                if (hostname.includes('flipkart')) return 'Flipkart';
-                if (hostname.includes('myntra')) return 'Myntra';
-                if (hostname.includes('ajio')) return 'Ajio';
-                if (hostname.includes('meesho')) return 'Meesho';
-                if (hostname.includes('snapdeal')) return 'Snapdeal';
-                if (hostname.includes('tatacliq')) return 'Tata CLiQ';
-                if (hostname.includes('reliance')) return 'Reliance Digital';
-                if (hostname.includes('croma')) return 'Croma';
-                if (hostname.includes('nykaa')) return 'Nykaa';
-                return 'Store';
-            } catch { return 'Store'; }
-        };
+    const save = () => localStorage.setItem(key, JSON.stringify(trackers));
 
-        // Render stats
-        const renderStats = () => {
-            const total = trackers.length;
-            const reached = trackers.filter(t => t.current <= t.target).length;
-            const active = total - reached;
-            const avgSavings = total ? (trackers.reduce((a, t) => {
-                const savings = ((t.current - t.target) / t.current * 100);
-                return a + (savings > 0 ? savings : 0);
-            }, 0) / total) : 0;
+    const parseName = (url) => {
+      try {
+        const u = new URL(url);
+        const path = decodeURIComponent(u.pathname.replace(/\/+$/, ''));
+        const slug = path.split('/').filter(Boolean).pop() || u.hostname;
+        return slug.replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase()).slice(0, 110);
+      } catch { return 'Product'; }
+    };
 
-            document.getElementById('stats').innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-value">${total}</div>
-                    <div class="stat-label">Total Trackers</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${active}</div>
-                    <div class="stat-label">Active</div>
-                </div>
-                <div class="stat-card highlight">
-                    <div class="stat-value">${reached}</div>
-                    <div class="stat-label">Target Reached</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${avgSavings > 0 ? avgSavings.toFixed(1) + '%' : '0%'}</div>
-                    <div class="stat-label">Avg Savings</div>
-                </div>
-            `;
-        };
+    const renderStats = () => {
+      const total = trackers.length;
+      const reached = trackers.filter(t => t.current <= t.target).length;
+      const active = total - reached;
+      const avg = total ? (trackers.reduce((a,t)=>a + ((t.current - t.target) / t.current * 100),0) / total) : 0;
+      document.getElementById('stats').innerHTML = [
+        ['Total', total], ['Active', active], ['Target Reached', reached], ['Avg Savings', avg > 0 ? avg.toFixed(1) + '%' : '0%']
+      ].map(([k,v]) => `<div class="demo-card"><div style="font-size:12px;color:#666">${k}</div><div style="font-size:26px;font-weight:800">${v}</div></div>`).join('');
+    };
 
-        // Render trackers
-        const render = () => {
-            renderStats();
-            const box = document.getElementById('trackerGrid');
-            
-            if (!trackers.length) {
-                box.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fa fa-bell-slash"></i>
-                        <h3>No Trackers Yet</h3>
-                        <p>Add your first product URL above to start tracking prices</p>
-                        <a href="./index.html" class="btn btn-primary">
-                            <i class="fa fa-plus"></i> Add Tracker
-                        </a>
-                    </div>
-                `;
-                return;
-            }
+    const render = () => {
+      renderStats();
+      const box = document.getElementById('trackerGrid');
+      if (!trackers.length) {
+        box.innerHTML = '<div class="demo-card">No trackers yet. Add first product link.</div>';
+        return;
+      }
+      box.innerHTML = trackers.map((t, i) => {
+        const reached = t.current <= t.target;
+        return `<div class="demo-card">
+          <div class="tracker-title">${t.name}</div>
+          <a class="tracker-url" href="${t.url}" target="_blank" rel="noopener">${t.url}</a>
+          <div class="tracker-row"><span>CURRENT</span><strong>₹${t.current.toFixed(2)}</strong></div>
+          <div class="tracker-row"><span>TARGET</span><strong>₹${t.target.toFixed(2)}</strong></div>
+          <div class="tracker-row"><span class="pill ${reached ? 'ok':'wait'}">${reached ? 'Target Reached' : 'Active'}</span>
+            <button class="btn btn-light" onclick="removeTracker(${i})">Delete</button></div>
+        </div>`;
+      }).join('');
+    };
 
-            box.innerHTML = trackers.map((t, i) => {
-                const reached = t.current <= t.target;
-                const savings = ((t.current - t.target) / t.current * 100).toFixed(1);
-                
-                return `
-                    <div class="tracker-card">
-                        <div class="tracker-header">
-                            <div>
-                                <div class="tracker-name">${t.name}</div>
-                                <div class="tracker-store"><i class="fa fa-store"></i> ${getStoreName(t.url)}</div>
-                            </div>
-                            <button class="tracker-delete" onclick="removeTracker(${i})" title="Delete">
-                                <i class="fa fa-trash"></i>
-                            </button>
-                        </div>
-                        <a href="${t.url}" target="_blank" class="tracker-url">${t.url}</a>
-                        <div class="tracker-prices">
-                            <div class="price-box current">
-                                <div class="price-label">Current</div>
-                                <div class="price-value">₹${t.current.toFixed(2)}</div>
-                            </div>
-                            <div class="price-box">
-                                <div class="price-label">Target</div>
-                                <div class="price-value">₹${t.target.toFixed(2)}</div>
-                            </div>
-                            <div class="price-box">
-                                <div class="price-label">Savings</div>
-                                <div class="price-value">${savings}%</div>
-                            </div>
-                        </div>
-                        <div class="tracker-status">
-                            <span class="status-pill ${reached ? 'reached' : 'active'}">
-                                ${reached ? '<i class="fa fa-check-circle"></i> Target Reached' : '<i class="fa fa-clock"></i> Active'}
-                            </span>
-                            <span style="font-size: 12px; color: var(--text-secondary);">
-                                ${new Date(t.createdAt).toLocaleDateString()}
-                            </span>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        };
+    const randomize = (v) => {
+      const drift = (Math.random() - 0.5) * Math.max(3, v * 0.03);
+      return Math.max(1, v + drift);
+    };
 
-        // Simulate price changes
-        const randomize = (v) => {
-            const drift = (Math.random() - 0.5) * Math.max(3, v * 0.03);
-            return Math.max(1, v + drift);
-        };
+    const refreshAll = () => {
+      trackers = trackers.map(t => ({ ...t, current: randomize(t.current) }));
+      save();
+      render();
+    };
 
-        // Refresh all trackers
-        const refreshAll = () => {
-            trackers = trackers.map(t => ({ ...t, current: randomize(t.current) }));
-            save();
-            render();
-            showToast('success', 'Prices refreshed!');
-        };
+    window.removeTracker = (idx) => {
+      trackers.splice(idx, 1);
+      save();
+      render();
+    };
 
-        // Remove tracker
-        window.removeTracker = (idx) => {
-            trackers.splice(idx, 1);
-            save();
-            render();
-            showToast('success', 'Tracker removed');
-        };
+    document.getElementById('addTrackerBtn').addEventListener('click', () => {
+      const url = document.getElementById('productUrl').value.trim();
+      const target = parseFloat(document.getElementById('targetPrice').value);
+      if (!url || !/^https?:\/\//i.test(url) || !Number.isFinite(target) || target <= 0) return;
+      const base = Math.max(target + 10, target * (1 + (Math.random() * 0.18 + 0.02)));
+      trackers.unshift({
+        name: parseName(url),
+        url,
+        target,
+        current: base,
+        createdAt: Date.now()
+      });
+      document.getElementById('productUrl').value = '';
+      document.getElementById('targetPrice').value = '';
+      save();
+      render();
+    });
 
-        // Add new tracker
-        document.getElementById('addTrackerBtn').addEventListener('click', () => {
-            const url = document.getElementById('productUrl').value.trim();
-            const target = parseFloat(document.getElementById('targetPrice').value);
-            
-            if (!url || !/^https?:\/\//i.test(url)) {
-                showToast('error', 'Please enter a valid product URL');
-                return;
-            }
-            
-            if (!Number.isFinite(target) || target <= 0) {
-                showToast('error', 'Please enter a valid target price');
-                return;
-            }
+    document.getElementById('refreshAllBtn').addEventListener('click', refreshAll);
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('pa_current_user');
+      window.location.href = './index.html';
+    });
 
-            const base = Math.max(target + 10, target * (1 + (Math.random() * 0.18 + 0.02)));
-            
-            trackers.unshift({
-                name: parseName(url),
-                url,
-                target,
-                current: base,
-                createdAt: Date.now()
-            });
-            
-            document.getElementById('productUrl').value = '';
-            document.getElementById('targetPrice').value = '';
-            
-            save();
-            render();
-            showToast('success', 'Tracker added successfully!');
-        });
+    const startAuto = () => {
+      clearInterval(refreshTimer);
+      refreshTimer = setInterval(refreshAll, 5000);
+    };
 
-        // Allow Enter key to add tracker
-        document.getElementById('targetPrice').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                document.getElementById('addTrackerBtn').click();
-            }
-        });
-
-        // Refresh all button
-        document.getElementById('refreshAllBtn').addEventListener('click', refreshAll);
-
-        // Clear all button
-        document.getElementById('clearAllBtn').addEventListener('click', () => {
-            if (confirm('Are you sure you want to delete all trackers?')) {
-                trackers = [];
-                save();
-                render();
-                showToast('success', 'All trackers cleared');
-            }
-        });
-
-        // Logout
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            localStorage.removeItem('pa_current_user');
-            window.location.href = './index.html';
-        });
-
-        // Toggle auto-refresh
-        const startAuto = () => {
-            clearInterval(refreshTimer);
-            refreshTimer = setInterval(refreshAll, 5000);
-        };
-
-        document.getElementById('toggleRefresh').addEventListener('click', () => {
-            autoOn = !autoOn;
-            const badge = document.getElementById('refreshBadge');
-            const btn = document.getElementById('toggleRefresh');
-            
-            if (autoOn) {
-                startAuto();
-                badge.className = 'auto-refresh-badge on';
-                badge.innerHTML = '<i class="fa fa-sync"></i> Auto: ON';
-                btn.innerHTML = '<i class="fa fa-pause"></i> Pause';
-            } else {
-                clearInterval(refreshTimer);
-                badge.className = 'auto-refresh-badge off';
-                badge.innerHTML = '<i class="fa fa-pause"></i> Auto: OFF';
-                btn.innerHTML = '<i class="fa fa-play"></i> Resume';
-            }
-        });
-
-        // Toast notification
-        const showToast = (type, message) => {
-            const existing = document.querySelector('.toast-notification');
-            if (existing) existing.remove();
-            
-            const toast = document.createElement('div');
-            toast.className = 'toast-notification';
-            toast.innerHTML = `
-                <div class="toast-icon ${type}">
-                    <i class="fa fa-${type === 'success' ? 'check' : 'times'}"></i>
-                </div>
-                <div>${message}</div>
-            `;
-            
-            document.body.appendChild(toast);
-            setTimeout(() => toast.classList.add('active'), 10);
-            setTimeout(() => {
-                toast.classList.remove('active');
-                setTimeout(() => toast.remove(), 400);
-            }, 3000);
-        };
-
-        // Initial render
-        render();
+    document.getElementById('toggleRefresh').addEventListener('click', () => {
+      autoOn = !autoOn;
+      const badge = document.getElementById('refreshBadge');
+      const btn = document.getElementById('toggleRefresh');
+      if (autoOn) {
         startAuto();
-    </script>
+        badge.textContent = 'Auto refresh: ON (5s)';
+        btn.textContent = 'Pause';
+      } else {
+        clearInterval(refreshTimer);
+        badge.textContent = 'Auto refresh: OFF';
+        btn.textContent = 'Resume';
+      }
+    });
+
+    render();
+    startAuto();
+  </script>
 </body>
 </html>
-
-
