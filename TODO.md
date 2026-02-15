@@ -1,16 +1,20 @@
-# TODO: Dashboard UI Enhancement Plan
+# Price Alerter Website Enhancement - TODO
 
-## Task: Add Modern SaaS Sidebar Navigation to Dashboard
+## Phase 1: Fix Navigation Links
+- [x] 1.1 Update home.html links (/signup → signup.html, /login → signin.html)
+- [x] 1.2 Add section IDs for anchor links (#features, #how-it-works, etc.)
+- [x] 1.3 Update footer links in home.html
 
-### Steps to Complete:
+## Phase 2: Create Dashboard
+- [ ] 2.1 Create dashboard.html from index.html content
+- [ ] 2.2 Update index.html to redirect to home.html
 
-1. [x] **Analyze existing CSS** - Review static/style.css for sidebar styles
-2. [x] **Redesign dashboard.html** - Create new structure with:
-   - Left sidebar with Logo, New Alert button, Navigation items, Stats card
-   - Top bar with user welcome message and logout icon
-   - Main content area with URL input, action buttons, marketplace tags
-   - Trackers grid section
-3. [x] **Test the implementation** - All components render correctly using existing CSS
+## Phase 3: Enhance Auth Pages
+- [ ] 3.1 Add dashboard link to signin.html
+- [ ] 3.2 Add dashboard link to signup.html
+- [ ] 3.3 Add redirect logic after successful login/signup
 
-### Status: ✅ COMPLETED
+## Phase 4: Unify Styling
+- [ ] 4.1 Ensure consistent fonts, colors across all pages
+- [ ] 4.2 Test responsive design on all pages
 

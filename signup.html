@@ -1,42 +1,28 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up - AI Price Alert | Never Miss a Price Drop</title>
+
     <meta name="description" content="Create your free account on AI Price Alert. Start tracking product prices across Amazon, Flipkart, Myntra and 100+ stores. Never miss a price drop again!">
     <meta name="keywords" content="price tracker, price alert, sign up, register, amazon price tracker, flipkart price tracker, myntra price alert, save money shopping">
     <meta property="og:title" content="Sign Up - AI Price Alert | Never Miss a Price Drop">
     <meta property="og:description" content="Create your free account and start tracking prices across 100+ stores. Save money on every purchase!">
-    <meta property="og:image" content="https://aipricealert.com/static/brand/og-image.png">
+    <meta property="og:image" content="https://aipricealert.com/static/og-image.png">
     <meta property="og:url" content="https://aipricealert.com/signup">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Sign Up - AI Price Alert">
     <meta name="twitter:description" content="Never miss a price drop again! Track prices across 100+ stores.">
-    <meta name="twitter:image" content="https://aipricealert.com/static/brand/og-image.png">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔔</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><text y=\'.9em\' font-size=\'90\'>🔔</text></svg>">
     <link rel="canonical" href="https://aipricealert.com/signup">
-    <link rel="stylesheet" href="./static/auth.css">
+    <link rel="stylesheet" href="auth.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Unbounded:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body { overflow-y: auto; }
-        .success-message {
-            background: #dcfce7;
-            color: #16a34a;
-            padding: 14px 18px;
-            border-radius: 10px;
-            font-size: 14px;
-            margin-top: 16px;
-            display: none;
-            align-items: center;
-            gap: 10px;
-        }
-        .success-message i { font-size: 18px; }
-    </style>
+    
 </head>
 <body>
     <div class="scene">
@@ -45,7 +31,8 @@
         <div class="orb orb-3"></div>
         <div class="grid"></div>
     </div>
-    <div class="auth-container">
+    <div class="auth-container tilt-root" data-tilt="7">
+        <!-- Top Banner Ad -->
         <div class="auth-card">
             <div class="auth-header">
                 <div class="logo">
@@ -56,6 +43,7 @@
                 <p>Start tracking prices and save money</p>
             </div>
 
+            <!-- Step 1: Basic Info -->
             <form id="signup-form" class="auth-form">
                 <div class="form-group">
                     <label for="username"><i class="fa fa-user"></i> Username</label>
@@ -85,30 +73,133 @@
                 <div class="form-options">
                     <label class="checkbox-label">
                         <input type="checkbox" id="terms" required>
-                        <span>I agree to the <a href="./terms.html">Terms & Conditions</a></span>
+                        <span>I agree to the <a href="#">Terms & Conditions</a></span>
                     </label>
                 </div>
 
                 <button type="submit" class="auth-btn">
-                    <span>Create Account</span>
-                    <i class="fa fa-user-plus"></i>
+                    <span>Continue to Verification</span>
+                    <i class="fa fa-arrow-right"></i>
                 </button>
 
                 <div id="error-message" class="error-message" style="display: none;"></div>
-                <div id="success-message" class="success-message" style="display: none;"></div>
             </form>
 
+            <!-- Step 2: OTP Verification -->
+            <div id="verification-section" class="verification-section" style="display: none;">
+                <h2><i class="fa fa-shield"></i> Verify Your Account</h2>
+                <p class="verification-info">Enter the OTP sent to your email and phone to complete registration</p>
+                
+                <div class="verification-methods">
+                    <!-- Email OTP -->
+                    <div class="verification-method" id="email-verification">
+                        <div class="method-header">
+                            <i class="fa fa-envelope"></i>
+                            <span>Email Verification</span>
+                            <span class="verification-status" id="email-status">Pending</span>
+                        </div>
+                        <div class="method-content">
+                            <p id="email-address">Send OTP to: <span class="target"></span></p>
+                            <div class="otp-input-group">
+                                <input type="text" id="email-otp" placeholder="Enter 6-digit OTP" maxlength="6">
+                                <button type="button" class="otp-btn" id="send-email-otp">
+                                    <i class="fa fa-paper-plane"></i> Send OTP
+                                </button>
+                            </div>
+                            <button type="button" class="verify-btn" id="verify-email-otp">
+                                <i class="fa fa-check"></i> Verify Email
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Phone OTP -->
+                    <div class="verification-method" id="phone-verification" style="display: none;">
+                        <div class="method-header">
+                            <i class="fa fa-phone"></i>
+                            <span>Phone Verification</span>
+                            <span class="verification-status" id="phone-status">Pending</span>
+                        </div>
+                        <div class="method-content">
+                            <p id="phone-number">Send OTP to: <span class="target"></span></p>
+                            <div class="otp-input-group">
+                                <input type="text" id="phone-otp" placeholder="Enter 6-digit OTP" maxlength="6">
+                                <button type="button" class="otp-btn" id="send-phone-otp">
+                                    <i class="fa fa-paper-plane"></i> Send OTP
+                                </button>
+                            </div>
+                            <button type="button" class="verify-btn" id="verify-phone-otp">
+                                <i class="fa fa-check"></i> Verify Phone
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="verification-progress">
+                    <div class="progress-step active" id="step-1">
+                        <span class="step-number">1</span>
+                        <span class="step-label">Account Info</span>
+                    </div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step" id="step-2">
+                        <span class="step-number">2</span>
+                        <span class="step-label">Verify</span>
+                    </div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step" id="step-3">
+                        <span class="step-number">3</span>
+                        <span class="step-label">Complete</span>
+                    </div>
+                </div>
+
+                <button type="button" class="auth-btn" id="complete-signup" disabled>
+                    <span>Complete Registration</span>
+                    <i class="fa fa-check"></i>
+                </button>
+            </div>
+
             <div class="auth-footer">
-                <p>Already have an account? <a href="./login.html">Sign In</a></p>
+                <p>Already have an account? <a href="signin.html">Sign In</a></p>
+<p class="dashboard-link">Want to try demo? <a href="index.html">Go to Dashboard</a></p>
             </div>
 
             <div class="divider">
                 <span>Trusted by thousands</span>
             </div>
 
-            <div class="auth-features" style="display: none;"></div>
+            <div class="auth-features">
+                <div class="features-list">
+                    <div class="feature">
+                        <i class="fa fa-bell"></i>
+                        <div>
+                            <h4>Real-time Alerts</h4>
+                            <p>Get notified when prices drop</p>
+                        </div>
+                    </div>
+                    <div class="feature">
+                        <i class="fa fa-chart-line"></i>
+                        <div>
+                            <h4>Price History</h4>
+                            <p>Track price trends over time</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AdSense Ad Container -->
+            <div class="ad-container" data-ad-slot="signupPage" style="margin-top: 20px;">
+                <div class="ad-placeholder">
+                    <div class="ad-placeholder-content">
+                        <span class="ad-label">Advertisement</span>
+                        <div class="ad-placeholder-box">
+                            <i class="fa fa-ad"></i>
+                            <span>Your Ad Here</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         
+        <!-- Bottom Banner Ad -->
         <div class="auth-features">
             <h2>Smart Price Tracking</h2>
             <div class="features-list">
@@ -133,136 +224,11 @@
                         <p>Compare prices across Amazon, Flipkart & more</p>
                     </div>
                 </div>
-                <div class="feature">
-                    <i class="fa fa-robot"></i>
-                    <div>
-                        <h4>AI Predictions</h4>
-                        <p>Get smart predictions on best buy time</p>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 
-    <script>
-        // Clear old test data if needed (for development/testing)
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('clear') === 'true') {
-            localStorage.removeItem('pa_users_v2');
-            localStorage.removeItem('pa_current_user');
-            localStorage.removeItem('pa_trackers_');
-            // Remove the query param to clean URL
-            window.history.replaceState({}, document.title, window.location.pathname);
-            alert('Test data cleared! You can now create a new account.');
-        }
-        
-        const usersKey = 'pa_users_v2';
-        
-        const showError = (msg) => {
-            const el = document.getElementById('error-message');
-            el.innerHTML = '<i class="fa fa-exclamation-circle"></i><span>' + msg + '</span>';
-            el.style.display = 'flex';
-            document.getElementById('success-message').style.display = 'none';
-        };
-
-        const showSuccess = (msg) => {
-            const el = document.getElementById('success-message');
-            el.innerHTML = '<i class="fa fa-check-circle"></i><span>' + msg + '</span>';
-            el.style.display = 'flex';
-            document.getElementById('error-message').style.display = 'none';
-        };
-
-        const showToast = (type, message) => {
-            const existing = document.querySelector('.toast-notification');
-            if (existing) existing.remove();
-            
-            const toast = document.createElement('div');
-            toast.className = 'toast-notification';
-            toast.innerHTML = `
-                <div class="toast-icon ${type}">
-                    <i class="fa fa-${type === 'success' ? 'check' : 'times'}"></i>
-                </div>
-                <div class="toast-content">
-                    <strong>${type === 'success' ? 'Success!' : 'Error!'}</strong>
-                    <span>${message}</span>
-                </div>
-            `;
-            
-            if (!document.getElementById('toast-styles')) {
-                const styles = document.createElement('style');
-                styles.id = 'toast-styles';
-                styles.textContent = `
-                    .toast-notification { position: fixed; top: 24px; right: 24px; background: #1d1d1f; color: white; padding: 16px 24px; border-radius: 14px; display: flex; align-items: center; gap: 16px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 1000; }
-                    .toast-notification.active { transform: translateX(0); }
-                    .toast-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-                    .toast-icon.success { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
-                    .toast-icon.error { background: linear-gradient(135deg, #cb2d3e 0%, #ef473a 100%); }
-                    .toast-content { display: flex; flex-direction: column; }
-                    .toast-content strong { margin-bottom: 2px; }
-                    .toast-content span { font-size: 0.9rem; opacity: 0.9; }
-                `;
-                document.head.appendChild(styles);
-            }
-            
-            document.body.appendChild(toast);
-            setTimeout(() => toast.classList.add('active'), 10);
-            setTimeout(() => {
-                toast.classList.remove('active');
-                setTimeout(() => toast.remove(), 400);
-            }, 4000);
-        };
-
-        document.getElementById('signup-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const username = document.getElementById('username').value.trim();
-            const email = document.getElementById('email').value.trim().toLowerCase();
-            const phone = document.getElementById('phone').value.trim();
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirm_password').value;
-            const terms = document.getElementById('terms').checked;
-
-            if (!username || !email || !password || !confirmPassword) {
-                return showError('Please fill in all required fields');
-            }
-
-            if (password !== confirmPassword) {
-                return showError('Passwords do not match');
-            }
-
-            if (password.length < 6) {
-                return showError('Password must be at least 6 characters');
-            }
-
-            if (!terms) {
-                return showError('Please agree to the Terms & Conditions');
-            }
-
-            const users = JSON.parse(localStorage.getItem(usersKey) || '[]');
-            
-            if (users.some(u => u.email === email)) {
-                return showError('Account already exists. Please sign in.');
-            }
-
-            const newUser = {
-                username,
-                email,
-                phone,
-                password,
-                createdAt: Date.now()
-            };
-
-            users.push(newUser);
-            localStorage.setItem(usersKey, JSON.stringify(users));
-            localStorage.setItem('pa_last_signup_email', email);
-
-            showToast('success', 'Account created successfully!');
-            
-            setTimeout(() => {
-                window.location.href = './login.html';
-            }, 1500);
-        });
-    </script>
+    <script src="auth.js"></script>
+    <script src="ads.js"></script>
 </body>
 </html>
-
