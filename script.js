@@ -67,8 +67,32 @@
 
   function applySessionGuard() {
     const sessionRaw = localStorage.getItem(SESSION_KEY);
+    const greeting = el("user-greeting");
+    const logoutBtn = el("dashboard-logout-btn");
+
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        localStorage.removeItem(SESSION_KEY);
+        showToast("Signed out successfully");
+        setTimeout(() => {
+          window.location.href = "signin.html";
+        }, 350);
+      });
+    }
+
     if (!sessionRaw) {
+      if (greeting) greeting.textContent = "Welcome, Guest";
       showToast("Tip: Use signup/signin flow to persist account session.", "Demo Mode");
+      return;
+    }
+
+    try {
+      const session = JSON.parse(sessionRaw);
+      const displayName = session?.username || session?.email || "User";
+      if (greeting) greeting.textContent = `Welcome, ${displayName}`;
+    } catch {
+      if (greeting) greeting.textContent = "Welcome, User";
     }
   }
 
