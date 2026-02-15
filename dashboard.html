@@ -1,0 +1,239 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - AI Price Alert | Manage Your Price Trackers</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔔</text></svg>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="dashboard-header">
+        <div class="dashboard-logo">
+            <i class="fa fa-bell"></i>
+            <span>AI Price Alert</span>
+        </div>
+        <nav class="dashboard-nav">
+            <a href="home.html"><i class="fa fa-home"></i> Home</a>
+            <a href="#" class="active"><i class="fa fa-th"></i> Dashboard</a>
+            <a href="#"><i class="fa fa-cog"></i> Settings</a>
+        </nav>
+        <div class="dashboard-user">
+            <div class="user-avatar"><i class="fa fa-user"></i></div>
+            <span class="user-name">User</span>
+            <a href="signin.html" class="logout-btn" title="Sign Out"><i class="fa fa-sign-out"></i></a>
+        </div>
+    </header>
+
+    <div class="browser-window">
+        <div class="browser-header">
+            <div class="window-dots">
+                <div class="dot red"></div>
+                <div class="dot yellow"></div>
+                <div class="dot green"></div>
+            </div>
+            <div class="address-bar">
+                <i class="fa fa-lock" style="margin-right:8px;font-size:10px;"></i>
+                app.aipricealert.com/dashboard
+            </div>
+        </div>
+
+        <div class="viewport">
+            <div class="app-sidebar">
+                <h3 style="margin-bottom:30px;">🔔 AI Tracker</h3>
+                <div class="nav-item active" data-view="new-alert"><i class="fa fa-plus-circle"></i> New Alert</div>
+                <div class="nav-item" data-view="my-trackers"><i class="fa fa-list"></i> My Trackers</div>
+                <div class="nav-item" data-view="price-trends"><i class="fa fa-chart-line"></i> Price Trends</div>
+                <div class="nav-item" data-view="settings"><i class="fa fa-gear"></i> Settings</div>
+                <div class="sidebar-stats">
+                    <div class="stat-item">
+                        <span class="stat-value">0</span>
+                        <span class="stat-label">Active</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">0</span>
+                        <span class="stat-label">Deals</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="app-main">
+                <div id="view-new-alert" class="view active">
+                    <div class="input-container">
+                        <h1 style="font-size:2.5rem;margin-bottom:10px;">Paste Link. Save Money.</h1>
+                        <p style="color:#666;margin-bottom:40px;">The AI tracks the price 24/7 and sends you a notification the second it drops.</p>
+                        <input type="text" id="urlInput" class="product-input" placeholder="Paste Amazon, Flipkart, Myntra, Ajio, Meesho link here...">
+                        <div id="priceStep" style="display:none;margin-top:15px;">
+                            <p><strong>Set Target Price:</strong></p>
+                            <input type="number" id="targetPrice" class="product-input" style="width:150px;" placeholder="$0.00">
+                        </div>
+                        <button id="mainBtn" class="action-btn" onclick="handleFlow()">Start AI Tracking</button>
+                        <div class="supported-sites">
+                            <span><i class="fa fa-amazon"></i> Amazon</span>
+                            <span><i class="fa fa-shopping-cart"></i> Flipkart</span>
+                            <span><i class="fa fa-tag"></i> Myntra</span>
+                            <span><i class="fa fa-shopping-bag"></i> Ajio</span>
+                            <span><i class="fa fa-mobile"></i> Meesho</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="view-my-trackers" class="view">
+                    <div class="trackers-header">
+                        <h2><i class="fa fa-list"></i> My Trackers</h2>
+                    </div>
+                    <div class="stats-cards">
+                        <div class="stat-card">
+                            <div class="stat-icon blue"><i class="fa fa-list"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-number">0</span>
+                                <span class="stat-desc">Total Trackers</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon green"><i class="fa fa-check-circle"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-number">0</span>
+                                <span class="stat-desc">Deals Found</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon orange"><i class="fa fa-arrow-down"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-number">0%</span>
+                                <span class="stat-desc">Avg Savings</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="trackers-list" class="trackers-grid">
+                        <div class="empty-state">
+                            <i class="fa fa-rocket"></i>
+                            <h3>No trackers yet!</h3>
+                            <p>Create your first price alert to start saving money</p>
+                            <button class="action-btn" onclick="switchView('new-alert')">Create Tracker</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="view-price-trends" class="view">
+                    <div class="trends-header">
+                        <h2><i class="fa fa-chart-line"></i> Price Trends</h2>
+                    </div>
+                    <div class="product-preview">
+                        <div class="product-image"><i class="fa fa-shopping-bag"></i></div>
+                        <div class="product-details">
+                            <h3>Select a tracker to view trends</h3>
+                            <p>Click the chart icon on any tracker to see price history</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="view-settings" class="view">
+                    <h2><i class="fa fa-cog"></i> Settings</h2>
+                    <div class="settings-grid">
+                        <div class="settings-section">
+                            <h3><i class="fa fa-bell"></i> Notifications</h3>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <label>Push Notifications</label>
+                                    <p>Get browser notifications when price drops</p>
+                                </div>
+                                <input type="checkbox" checked>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <label>Email Alerts</label>
+                                    <p>Receive daily price update summaries</p>
+                                </div>
+                                <input type="checkbox">
+                            </div>
+                        </div>
+                        <div class="settings-section">
+                            <h3><i class="fa fa-info-circle"></i> About</h3>
+                            <div class="about-info">
+                                <p><strong>AI Price Alert v2.0</strong></p>
+                                <p>Smart price tracking assistant</p>
+                                <p class="version">Version 2.0.0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="toast">
+            <div class="toast-icon success"><i class="fa fa-check"></i></div>
+            <div class="toast-content">
+                <strong>Success!</strong>
+                <span>Operation completed</span>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .dashboard-header {
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            padding:15px 30px;
+            background:rgba(255,255,255,0.95);
+            backdrop-filter:blur(10px);
+            border-bottom:1px solid #d3e3ff;
+            position:sticky;
+            top:0;
+            z-index:1000;
+        }
+        .dashboard-logo {
+            display:flex;
+            align-items:center;
+            gap:10px;
+            font-size:20px;
+            font-weight:700;
+            color:#17263f;
+        }
+        .dashboard-logo i { color:#1769ff; }
+        .dashboard-nav { display:flex; gap:20px; }
+        .dashboard-nav a {
+            text-decoration:none;
+            color:#6f7f98;
+            font-weight:500;
+            padding:8px 16px;
+            border-radius:8px;
+            transition:all 0.3s;
+        }
+        .dashboard-nav a:hover,.dashboard-nav a.active {
+            background:rgba(23,105,255,0.1);
+            color:#1769ff;
+        }
+        .dashboard-user { display:flex; align-items:center; gap:12px; }
+        .user-avatar {
+            width:36px;height:36px;border-radius:50%;
+            background:linear-gradient(135deg,#1769ff,#13b6ff);
+            display:flex;align-items:center;justify-content:center;
+            color:white;
+        }
+        .user-name { font-weight:500; color:#17263f; }
+        .logout-btn { color:#e94d63;font-size:18px; }
+        @media(max-width:768px){
+            .dashboard-header{flex-direction:column;gap:15px;padding:15px;}
+            .dashboard-nav{flex-wrap:wrap;justify-content:center;}
+        }
+    </style>
+
+    <script src="script.js"></script>
+    <script>
+        document.querySelectorAll('.app-sidebar .nav-item').forEach(item => {
+            item.addEventListener('click',function(){
+                const viewId=this.getAttribute('data-view');
+                document.querySelectorAll('.app-sidebar .nav-item').forEach(i=>i.classList.remove('active'));
+                this.classList.add('active');
+                document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+                document.getElementById('view-'+viewId).classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
+
